@@ -5,6 +5,9 @@
 #include "nocopy.h"
 #include "export.h"
 
+// what I want to do here is to implement the simple port interface for the teensy's hardware serial
+// class. normal SerialPort class implements this as well and extends it.
+
 namespace vn
 {
     namespace xplat
@@ -18,23 +21,35 @@ namespace vn
                 TWO_STOP_BITS
             };
 
-            TeensySerial(uint32_t baudrate);
+            TeensySerial(HardwareSerial * serial, uint32_t baud){
+                _port = serial;
+                _baud = baud;
+                _onDataReceived = nullptr;
+                _userData = nullptr;
+            }
             ~TeensySerial();
 
-            virtual void open();
+            virtual void open() override;
 
-            virtual void close();
+            virtual void close() override;
 
-            virtual bool isOpen();
+            virtual bool isOpen() override;
 
-            virtual void write(const char data[], size_t length);
+            virtual void write(const char data[], size_t length) override;
 
-            virtual void read(char dataBuffer[], size_t numOfBytesToRead, size_t &numOfBytesActuallyRead);
+            virtual void read(char dataBuffer[], size_t numOfBytesToRead, size_t &numOfBytesActuallyRead) override;
 
-            virtual void registerDataReceivedHandler(void* userData, DataReceivedHandler handler);
+            virtual void registerDataReceivedHandler(void* userData, DataReceivedHandler handler) override;
 
-            virtual void unregisterDataReceivedHandler();
+            virtual void unregisterDataReceivedHandler() override;
+            void receiveHandleExternal();
+        private:
+            HardwareSerial * _port;
+            uint32_t _baud;
+            DataReceivedHandler _onDataReceived;
+            void ** _userData;
+
         };
-
+        
     }
 }

@@ -1,7 +1,6 @@
 #include "libvncxx/packetfinder.h"
 #include "libvncxx/utilities.h"
 #include "libvncxx/error_detection.h"
-
 #include <queue>
 #include <list>
 #include <cstring>
@@ -31,7 +30,7 @@ struct BinaryTracker
 	bool startFoundInProvidedDataBuffer;
 	size_t runningDataIndexOfStart;
 	vn::xplat::TimeStamp timeFound;
-	explicit BinaryTracker(size_t possibleStartIndex, size_t runningDataIndex, TimeStamp timeFound_) :
+	explicit BinaryTracker(size_t possibleStartIndex, size_t runningDataIndex, vn::xplat::TimeStamp timeFound_) :
 		possibleStartIndex(possibleStartIndex),
 		groupsPresentFound(false),
 		numOfBytesRemainingToHaveAllGroupFields(0),
@@ -70,7 +69,7 @@ struct PacketFinder::Impl
 		size_t possibleStartOfPacketIndex;
 		bool asciiEndChar1Found;
 		size_t runningDataIndexOfStart;
-		TimeStamp timeFound;
+		vn::xplat::TimeStamp timeFound;
 
 		AsciiTracker() :
 			currentlyBuildingAsciiPacket(false),
@@ -85,7 +84,7 @@ struct PacketFinder::Impl
 			possibleStartOfPacketIndex = 0;
 			asciiEndChar1Found = false;
 			runningDataIndexOfStart = 0;
-			timeFound = TimeStamp();
+			timeFound = vn::xplat::TimeStamp();
 		}
 	};
 
