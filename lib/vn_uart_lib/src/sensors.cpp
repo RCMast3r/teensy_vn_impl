@@ -15,8 +15,13 @@
 
 #include <string>
 #include <queue>
+#ifdef __IMXRT1062__
+#include <Arduino.h>
+#endif
+#include <string>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 
 #if PYTHON
 	#include "util.h"
@@ -3629,8 +3634,12 @@ RESEND:
 	_pi->_filteringBootloaderResponses = true; /*Enable Bootloader Filtering just before sending the bootloader command */
 	_pi->transactionNoFinalize(toSend, length, waitForReply, &response, 6000, 6000);
 
+	#ifdef __IMXRT1062__
+	String resp(response.datastr().substr(7,2).c_str());
+	BootloaderError responseCode = (BootloaderError)resp.toInt();
+	#else
 	BootloaderError responseCode = (BootloaderError)std::stoi(response.datastr().substr(7,2));
-
+	#endif
 
 	if (responseCode == BLE_COMM_ERROR)
 	{
